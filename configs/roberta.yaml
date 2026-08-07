@@ -1,0 +1,21 @@
+model_name: roberta_base_fine_tuned_full_data
+checkpoint: FacebookAI/roberta-base
+
+data_csv: data/SQuAD-v1.1.csv
+n_rows: null
+seed: 42
+
+max_length: 384
+doc_stride: 128
+max_answer_length: 30
+n_best: 20
+
+learning_rate: 2.0e-5
+train_batch_size: 8
+eval_batch_size: 8
+num_train_epochs: 3
+weight_decay: 0.01
+warmup_ratio: 0.06
+
+output_dir: outputs/roberta_qa_full
+final_model_dir: saved_models/roberta_qa_full_best

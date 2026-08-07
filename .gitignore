@@ -1,0 +1,11 @@
+# Data (كبيرة، هنجيبها من kagglehub مش من git)
+data/*.csv
+
+# الموديلات المتدربة (كبيرة جداً، ومكانها الصح Drive/Hugging Face Hub مش git)
+saved_models/
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
