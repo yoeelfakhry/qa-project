@@ -16,59 +16,6 @@ from transformers import (
 from src.utils.preprocessing import make_preprocess_fn
 
 
-# --- Tokenizer / preprocessing ---
-tokenizer = AutoTokenizer.from_pretrained(cfg["checkpoint"], use_fast=True)
-preprocess_fn = make_preprocess_fn(
-    tokenizer, max_length=cfg["max_length"], doc_stride=cfg["doc_stride"])
-
-tokenized = dataset.map(
-    preprocess_fn,
-    batched=True,
-    remove_columns=dataset["train"].column_names,
-    load_from_cache_file=False,
-)
-
-# --- Model ---
-model = AutoModelForQuestionAnswering.from_pretrained(cfg["checkpoint"])
-n_params = sum(p.numel() for p in model.parameters())
-print(f"Total parameters: {n_params:,}")
-
-training_args = TrainingArguments(
-        output_dir=cfg["output_dir"],
-        eval_strategy="epoch",
-        save_strategy="epoch",
-        logging_strategy="epoch",
-        learning_rate=cfg["learning_rate"],
-        per_device_train_batch_size=cfg["train_batch_size"],
-        per_device_eval_batch_size=cfg["eval_batch_size"],
-        num_train_epochs=cfg["num_train_epochs"],
-        weight_decay=cfg["weight_decay"],
-        warmup_ratio=cfg["warmup_ratio"],
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_loss",
-        greater_is_better=False,
-        save_total_limit=2,
-        fp16=torch.cuda.is_available(),
-        seed=cfg["seed"],
-        data_seed=cfg["seed"],
-        report_to="none",)
-
-trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized["train"],
-        eval_dataset=tokenized["valid"],
-        processing_class=tokenizer,
-        data_collator=default_data_collator,)
-
-start = time.perf_counter()
-trainer.train()
-elapsed_min = (time.perf_counter() - start) / 60
-
-print(f"\nTraining time: {elapsed_min:.2f} min")
-print(f"Best checkpoint: {trainer.state.best_model_checkpoint}")
-print(f"Best eval_loss:  {trainer.state.best_metric:.4f}")
-
 
 def main(config_path: str):
     with open(config_path) as f:
@@ -89,6 +36,59 @@ def main(config_path: str):
         "valid": Dataset.from_pandas(valid_df),
         "test": Dataset.from_pandas(test_df),
     })
+
+        # --- Tokenizer / preprocessing ---
+    tokenizer = AutoTokenizer.from_pretrained(cfg["checkpoint"], use_fast=True)
+    preprocess_fn = make_preprocess_fn(
+        tokenizer, max_length=cfg["max_length"], doc_stride=cfg["doc_stride"])
+
+    tokenized = dataset.map(
+        preprocess_fn,
+        batched=True,
+        remove_columns=dataset["train"].column_names,
+        load_from_cache_file=False,
+    )
+
+    # --- Model ---
+    model = AutoModelForQuestionAnswering.from_pretrained(cfg["checkpoint"])
+    n_params = sum(p.numel() for p in model.parameters())
+    print(f"Total parameters: {n_params:,}")
+
+    training_args = TrainingArguments(
+            output_dir=cfg["output_dir"],
+            eval_strategy="epoch",
+            save_strategy="epoch",
+            logging_strategy="epoch",
+            learning_rate=cfg["learning_rate"],
+            per_device_train_batch_size=cfg["train_batch_size"],
+            per_device_eval_batch_size=cfg["eval_batch_size"],
+            num_train_epochs=cfg["num_train_epochs"],
+            weight_decay=cfg["weight_decay"],
+            warmup_ratio=cfg["warmup_ratio"],
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            save_total_limit=2,
+            fp16=torch.cuda.is_available(),
+            seed=cfg["seed"],
+            data_seed=cfg["seed"],
+            report_to="none",)
+
+    trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized["train"],
+            eval_dataset=tokenized["valid"],
+            processing_class=tokenizer,
+            data_collator=default_data_collator,)
+
+    start = time.perf_counter()
+    trainer.train()
+    elapsed_min = (time.perf_counter() - start) / 60
+
+    print(f"\nTraining time: {elapsed_min:.2f} min")
+    print(f"Best checkpoint: {trainer.state.best_model_checkpoint}")
+    print(f"Best eval_loss:  {trainer.state.best_metric:.4f}")
 
     final_dir = Path(cfg["final_model_dir"])
     final_dir.mkdir(parents=True, exist_ok=True)
