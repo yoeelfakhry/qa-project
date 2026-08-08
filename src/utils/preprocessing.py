@@ -1,5 +1,4 @@
 import numpy as np
-import configs.config as CONFIG
 
 
 def make_preprocess_fn(tokenizer, max_length: int, doc_stride: int):
