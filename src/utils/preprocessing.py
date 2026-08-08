@@ -1,4 +1,5 @@
 import numpy as np
+import configs.config as CONFIG
 
 
 def make_preprocess_fn(tokenizer, max_length: int, doc_stride: int):
@@ -24,9 +25,9 @@ def make_preprocess_fn(tokenizer, max_length: int, doc_stride: int):
         inputs = tokenizer(
             questions,
             examples["context"],
-            max_length=CONFIG["max_length"],
+            max_length=max_length,
             truncation="only_second",
-            stride=CONFIG["doc_stride"],
+            stride=doc_stride,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
             padding="max_length"
