@@ -17,15 +17,7 @@ num_train_epochs: 3
 weight_decay: 0.01
 warmup_ratio: 0.06
 
-# these when use colab for training, uncomment them and set the paths to your Google Drive
-# output_dir: /content/drive/MyDrive/qa-project/outputs/roberta_qa_full
-# final_model_dir: saved_models/roberta_qa_full_best
-
-# these when use kaggle for training, uncomment them and set the paths to your Kaggle working directory
 output_dir: /kaggle/working/outputs/roberta_qa_full
 final_model_dir: /kaggle/working/saved_models/roberta_qa_full_best
-
-hf_repo_id: your-username/roberta-qa-squad
-hf_token: your-write-access-token-here
 
 hf_repo_id: yoeel/roberta-qa-squad
