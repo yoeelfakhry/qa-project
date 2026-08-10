@@ -16,6 +16,21 @@ from transformers import (
 from src.utils.preprocessing import make_preprocess_fn
 
 
+from transformers import TrainerCallback
+
+# add a custom callback to push the model and tokenizer to the Hugging Face Hub after each save
+class PushToHubCallback(TrainerCallback):
+    def __init__(self, repo_id: str):
+        self.repo_id = repo_id
+
+    def on_save(self, args, state, control, **kwargs):
+        model = kwargs["model"]
+        tokenizer = kwargs["processing_class"]
+        print(f"\nPushing checkpoint (epoch {state.epoch:.0f}) to Hugging Face Hub...")
+        model.push_to_hub(self.repo_id, commit_message=f"Checkpoint at epoch {state.epoch:.0f}")
+        tokenizer.push_to_hub(self.repo_id, commit_message=f"Checkpoint at epoch {state.epoch:.0f}")
+        print("Push complete.")
+
 
 def main(config_path: str):
     with open(config_path) as f:
@@ -80,7 +95,9 @@ def main(config_path: str):
             train_dataset=tokenized["train"],
             eval_dataset=tokenized["valid"],
             processing_class=tokenizer,
-            data_collator=default_data_collator,)
+            data_collator=default_data_collator,
+            callbacks=[PushToHubCallback(cfg["hf_repo_id"])],
+)
 
     start = time.perf_counter()
     trainer.train()
@@ -111,6 +128,13 @@ def main(config_path: str):
         json.dump(manifest, f, indent=2)
 
     print(f"\nSaved model + manifest to: {final_dir}")
+
+    from huggingface_hub import login
+    login(token=cfg["hf_token"])
+
+    trainer.push_to_hub(cfg["hf_repo_id"])
+    tokenizer.push_to_hub(cfg["hf_repo_id"])
+    print(f"\nPushed model to: https://huggingface.co/{cfg['hf_repo_id']}")
 
 
 if __name__ == "__main__":
