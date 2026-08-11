@@ -129,12 +129,6 @@ def main(config_path: str):
 
     print(f"\nSaved model + manifest to: {final_dir}")
 
-    from huggingface_hub import login
-    login(token=cfg["hf_token"])
-
-    trainer.push_to_hub(cfg["hf_repo_id"])
-    tokenizer.push_to_hub(cfg["hf_repo_id"])
-    print(f"\nPushed model to: https://huggingface.co/{cfg['hf_repo_id']}")
 
 
 if __name__ == "__main__":
