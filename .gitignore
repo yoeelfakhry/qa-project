@@ -1,7 +1,7 @@
-# Data (كبيرة، هنجيبها من kagglehub مش من git)
+# Data 
 data/*.csv
 
-# الموديلات المتدربة (كبيرة جداً، ومكانها الصح Drive/Hugging Face Hub مش git)
+# saved models and outputs
 saved_models/
 outputs/
 
