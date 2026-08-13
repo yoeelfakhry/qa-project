@@ -46,29 +46,26 @@ comparison but for any future one.
 
 ## Project structure
 
-\`\`\`
-.
 ├── README.md
 ├── requirements.txt
-├── configs/                  # one YAML per training run
-│   ├── albert.yaml
-│   ├── bert.yaml
-│   └── roberta.yaml           # production config (full data)
-├── data/                      # gitignored; see setup below
+├── configs/ # one YAML per training run
+│ ├── albert.yaml
+│ ├── bert.yaml
+│ └── roberta.yaml # production config (full data)
+├── data/ # gitignored; see setup below
 ├── src/
-│   ├── utils/
-│   │   ├── data_utils.py      # load / dedup / split (shared, identical
-│   │   │                        logic across all models)
-│   │   ├── metrics.py         # Exact Match / F1
-│   │   └── preprocessing.py   # tokenization + answer-span decoding
-│   ├── models/
-│   │   ├── train.py           # single script trains any model via --config
-│   │   └── predict.py         # load a saved model, answer questions
-│   └── eval/
-│       └── evaluate.py        # EM/F1 + error analysis on a saved model
-├── saved_models/              # gitignored; trained checkpoints land here
-└── app.py                     # Streamlit demo UI
-\`\`\`
+│ ├── utils/
+│ │ ├── data_utils.py # load / dedup / split (shared, identical
+│ │ │ logic across all models)
+│ │ ├── metrics.py # Exact Match / F1
+│ │ └── preprocessing.py # tokenization + answer-span decoding
+│ ├── models/
+│ │ ├── train.py # single script trains any model via --config
+│ │ └── predict.py # load a saved model, answer questions
+│ └── eval/
+│ └── evaluate.py # EM/F1 + error analysis on a saved model
+├── saved_models/ # gitignored; trained checkpoints land here
+└── app.py # Streamlit demo UI
 
 ## Setup
 
