@@ -2,7 +2,7 @@ import streamlit as st
 
 from src.models.predict import QAModel
 
-MODEL_SOURCE = "saved_models/roberta_qa_full_best"
+MODEL_SOURCE = "yoeel/roberta-qa-squad"
 HF_MODEL_URL = "https://huggingface.co/yoeel/roberta-qa-squad"
 GITHUB_URL = "https://github.com/yoeelfakhry/qa-project"
 
