@@ -117,9 +117,16 @@ By default the app loads the model from the Hugging Face Hub
 
 ## Limitations
 
-- The model is purely **extractive** — it returns a span from the given
-  passage and cannot answer questions the passage doesn't cover, nor
-  synthesize information across multiple passages.
-- Trained and evaluated on SQuAD v1.1, which does not include unanswerable
-  questions (unlike SQuAD 2.0) — the model has not been trained to recognize
-  when no answer exists in the passage.
+- The model is purely **extractive** and was trained on SQuAD v1.1, which
+  assumes every question has an answer in the passage. When asked a
+  question the passage doesn't actually cover, the model does not abstain
+  — it confidently returns the closest matching span, which can be
+  incorrect. For example, given a passage distinguishing costs/casualties
+  between two separate historical events, asking about one event's
+  casualties (when only the other event's casualties are mentioned)
+  returns the wrong number rather than "no answer."
+
+## Future Work
+
+- Fine-tune on SQuAD 2.0 (which includes unanswerable questions) to teach
+  the model to abstain when the passage doesn't contain a genuine answer.
